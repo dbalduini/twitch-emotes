@@ -1,0 +1,18 @@
+{
+  "emoteNames" : [
+    "KAPOW",
+    "Kappa",
+    "KappaClaus",
+    "KappaPride",
+    "KappaRoss",
+    "KappaWealth"
+  ],
+  "emoteIcons" : {
+    "Kappa": "https://static-cdn.jtvnw.net/emoticons/v1/25/1.0",
+    "KappaClaus": "https://static-cdn.jtvnw.net/emoticons/v1/74510/1.0",
+    "KappaPride": "https://static-cdn.jtvnw.net/emoticons/v1/55338/1.0",
+    "KappaRoss": "https://static-cdn.jtvnw.net/emoticons/v1/70433/1.0",
+    "KappaWealth": "https://static-cdn.jtvnw.net/emoticons/v1/81997/1.0",
+    "KAPOW": "https://static-cdn.jtvnw.net/emoticons/v1/133537/1.0"
+  }
+}
