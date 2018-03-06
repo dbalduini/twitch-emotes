@@ -1,8 +1,14 @@
 /* global chrome, CustomEvent */
 let Config = {}
 
-chrome.storage.sync.get('config', function (data) {
+// document.querySelectorAll('.emote-picker__emote-figure')
+
+const replaceLastWord = (s, i, w) => s.substring(0, i) + w
+
+chrome.storage.local.get('config', function (data) {
   Config = data.config
+  Config.emoteNames = Object.keys(Config.faceEmotes)
+  console.log(Config)
   waitUntilChatAvailable(setup)
 })
 
@@ -29,13 +35,17 @@ function setup (chat) {
   const picker = injectEmotePicker(chat)
 
   chat.addEventListener('input', function () {
-    const emotes = filterEmotes(this.value)
+    const text = this.value
+    const word = getLastTypedWord(text)
+    const emotes = filterEmotes(word.val)
     const emoteNodes = emotes.map(createEmoteOption)
 
-    // Hide the emote picker and update the text with the correct spelling.
+    // Hide the emote picker and update the text with the correct spelling
     const onEmoteClick = function () {
       removeChildNodes(picker)
-      setChatText(this.getAttribute('data-emote'))
+      let emoteName = this.getAttribute('data-emote')
+      let newText = replaceLastWord(text, word.start, emoteName)
+      setChatText(newText)
     }
 
     removeChildNodes(picker)
@@ -47,12 +57,26 @@ function setup (chat) {
   })
 }
 
-function filterEmotes (val) {
-  if (!val) {
+function getLastTypedWord (text) {
+  if (text.length === 0) {
+    return text
+  }
+  let start = text.lastIndexOf(' ') + 1
+  let end = text.length
+  let val = text.substring(start, end)
+
+  return {
+    start,
+    end,
+    val
+  }
+}
+
+function filterEmotes (word) {
+  if (!word) {
     return []
   }
-  val = val.toLowerCase()
-  return Config.emoteNames.filter(emote => emote.toLowerCase().startsWith(val))
+  return Config.emoteNames.filter(w => w.toLowerCase().startsWith(word))
 }
 
 /**
@@ -94,7 +118,7 @@ function createEmoteOption (emote) {
  */
 function createEmoteNode (name) {
   const emote = document.createElement('img')
-  emote.src = Config.emoteIcons[name]
+  emote.src = Config.faceEmotes[name]
   emote.alt = name
   emote.classList = ['chat-image', 'chat-line__message--emote', 'tw-inline-block']
   return emote

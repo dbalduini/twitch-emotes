@@ -24,7 +24,9 @@
     }
 
     if (reactInstance) {
-      reactInstance.props.children.props.onChange(evt)
+      let prop = reactInstance.props.children.props
+      prop.onChange(evt)
+      prop.onFocus()
     } else {
       console.error('Cound not find the react component for:', chat)
     }

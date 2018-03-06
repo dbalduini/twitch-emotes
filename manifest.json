@@ -1,9 +1,8 @@
 {
   "manifest_version": 2,
   "name" : "Twitch Emotes Remembrall",
-  "version": "0.1",
+  "version": "0.2",
   "content_scripts": [{
-    "run_at": "document_idle",
     "matches": [
       "http://twitch.tv/*",
       "https://twitch.tv/*",
@@ -11,23 +10,17 @@
       "https://*.twitch.tv/*"
     ],
     "js": [
-      "content.js",
-      "inject-script.js"
+      "inject-script.js",
+      "content.js"
     ],
-    "css": [
-      "styles.css"
-    ]
+    "css": [ "css/styles.css" ]
   }],
   "web_accessible_resources": [
     "config.json",
     "scripts/*.js"
   ],
   "background" : {
-    "scripts": [
-      "background.js"
-    ]
+    "scripts": [ "background.js" ]
   },
-  "permissions": [
-    "storage"
-  ]
+  "permissions": [ "storage" ]
 }
