@@ -41,6 +41,3 @@ It is only required to follow the [standard.js](https://standardjs.com) guidelin
 # Resources
 * [Learn to create Chrome extensions](http://shiffman.net/a2z/chrome-ext)
 * [manifest.js Docs](https://developer.chrome.com/extensions/manifest)
-
-# TODO
-* The content script needs to refresh on page change.
