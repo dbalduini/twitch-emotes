@@ -1,10 +1,9 @@
 /* global chrome, CustomEvent */
-let Config = {}
 
-// document.querySelectorAll('.emote-picker__emote-figure')
-
+const COMMAND_KEY = '?'
 const replaceLastWord = (s, i, w) => s.substring(0, i) + w
 
+let Config = {}
 chrome.storage.local.get('config', function (data) {
   Config = data.config
   Config.emoteNames = Object.keys(Config.faceEmotes)
@@ -36,39 +35,81 @@ function setup (chat) {
 
   chat.addEventListener('input', function () {
     const text = this.value
-    const word = getLastTypedWord(text)
-    const emotes = filterEmotes(word.val)
-    const emoteNodes = emotes.map(createEmoteOption)
-
-    // Hide the emote picker and update the text with the correct spelling
-    const onEmoteClick = function () {
-      removeChildNodes(picker)
-      let emoteName = this.getAttribute('data-emote')
-      let newText = replaceLastWord(text, word.start, emoteName)
-      setChatText(newText)
-    }
-
     removeChildNodes(picker)
+    if (text.trim().length > 0) {
+      updateEmotePicker(picker, text)
+    }
+  })
 
-    emoteNodes.forEach(emote => {
-      emote.addEventListener('click', onEmoteClick)
-      picker.appendChild(emote)
-    })
+  chat.addEventListener('keyup', function (e) {
+    // Key TAB pressed
+    if (e.which === 9) {
+      e.preventDefault()
+      e.stopPropagation()
+      let text = e.target.textContent
+      pickFirstEmote(picker, text)
+      removeChildNodes(picker)
+    }
+  })
+}
+
+function pickFirstEmote (picker, text) {
+  let emoteNodes = document.querySelectorAll('.remembrall-option')
+
+  if (!emoteNodes) {
+    return
+  }
+
+  let firstEmoteName = emoteNodes[0].getAttribute('data-emote')
+
+  // remove the last space
+  let word = getLastTypedWord(text.slice(0, -1))
+  let newText = replaceLastWord(text, word.start, firstEmoteName)
+
+  // append the removed space again
+  setChatText(newText + ' ')
+}
+
+function updateEmotePicker (picker, text) {
+  let word = getLastTypedWord(text)
+
+  if (!word.isCommand) {
+    return false
+  }
+
+  let emotes = filterEmotes(word.val)
+  let emoteNodes = emotes.map(createEmoteOption)
+
+  // Hide the emote picker and update the text with the correct spelling
+  const pickEmote = function () {
+    removeChildNodes(picker)
+    let emoteName = this.getAttribute('data-emote')
+    let newText = replaceLastWord(text, word.start, emoteName)
+    setChatText(newText)
+  }
+
+  emoteNodes.forEach(emote => {
+    emote.addEventListener('click', pickEmote)
+    picker.appendChild(emote)
   })
 }
 
 function getLastTypedWord (text) {
-  if (text.length === 0) {
-    return text
-  }
   let start = text.lastIndexOf(' ') + 1
   let end = text.length
   let val = text.substring(start, end)
+  let isCommand = text[0] === COMMAND_KEY
+
+  if (isCommand) {
+    // remove the first char
+    val = val.slice(1)
+  }
 
   return {
     start,
     end,
-    val
+    val,
+    isCommand
   }
 }
 
@@ -76,7 +117,8 @@ function filterEmotes (word) {
   if (!word) {
     return []
   }
-  return Config.emoteNames.filter(w => w.toLowerCase().startsWith(word))
+  const compare = w => w.toLowerCase().startsWith(word.toLowerCase())
+  return Config.emoteNames.filter(compare)
 }
 
 /**
@@ -87,6 +129,8 @@ function filterEmotes (word) {
 function injectEmotePicker (chat) {
   const picker = document.createElement('div')
   const balloonUP = document.createElement('div')
+
+  picker.classList.add('remembrall-picker')
 
   balloonUP.style.backgroundColor = 'white'
 
@@ -105,9 +149,16 @@ function injectEmotePicker (chat) {
  */
 function createEmoteOption (emote) {
   const option = document.createElement('div')
+  const emoteNode = createEmoteNode(emote)
+  const div = document.createElement('div')
+
   option.classList = [ 'remembrall-option' ]
   option.setAttribute('data-emote', emote)
-  option.appendChild(createEmoteNode(emote))
+
+  div.classList.add('emote-icon')
+  div.appendChild(emoteNode)
+
+  option.appendChild(div)
   option.appendChild(document.createTextNode(emote))
   return option
 }
@@ -120,7 +171,6 @@ function createEmoteNode (name) {
   const emote = document.createElement('img')
   emote.src = Config.faceEmotes[name]
   emote.alt = name
-  emote.classList = ['chat-image', 'chat-line__message--emote', 'tw-inline-block']
   return emote
 }
 

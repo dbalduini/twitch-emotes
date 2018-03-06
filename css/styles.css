@@ -1,3 +1,34 @@
-.remembrall-option:hover {
-    background-color: yellow;
+.remembrall-picker {
+    overflow-y: scroll;
+    max-height: 200px;
+}
+
+.remembrall-picker::-webkit-scrollbar {
+    -webkit-appearance: none;
+    width: 7px;
+}
+.remembrall-picker::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background-color: rgba(0,0,0,.5);
+    box-shadow: 0 0 1px rgba(255,255,255,.5);
+}
+.remembrall-option {
+    padding: 4px;
+}
+.remembrall-option > img {
+    vertical-align: middle;
+}
+.remembrall-option .emote-icon {
+    margin-right: 5px;
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+}
+.remembrall-option:hover { 
+    background-color: rgb(100, 65, 164);
+    color: white;
+}
+.remembrall-option:first-of-type { 
+    background-color: rgb(100, 65, 164);
+    color: white;
 }
