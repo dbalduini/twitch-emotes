@@ -3,11 +3,17 @@
 const COMMAND_KEY = '?'
 const replaceLastWord = (s, i, w) => s.substring(0, i) + w
 
+// Reload this content_script when the url changes
+chrome.extension.onMessage.addListener(function (msg) {
+  if (msg.action === 'url_changed') {
+    waitUntilChatAvailable(setup)
+  }
+})
+
 let Config = {}
 chrome.storage.local.get('config', function (data) {
   Config = data.config
   Config.emoteNames = Object.keys(Config.faceEmotes)
-  console.log(Config)
   waitUntilChatAvailable(setup)
 })
 
@@ -56,7 +62,7 @@ function setup (chat) {
 function pickFirstEmote (picker, text) {
   let emoteNodes = document.querySelectorAll('.remembrall-option')
 
-  if (!emoteNodes) {
+  if (emoteNodes.length === 0) {
     return
   }
 
@@ -98,7 +104,7 @@ function getLastTypedWord (text) {
   let start = text.lastIndexOf(' ') + 1
   let end = text.length
   let val = text.substring(start, end)
-  let isCommand = text[0] === COMMAND_KEY
+  let isCommand = val[0] === COMMAND_KEY
 
   if (isCommand) {
     // remove the first char

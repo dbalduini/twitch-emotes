@@ -1,8 +1,6 @@
 (function () {
   'use strict'
 
-  let reactInstance = null
-
   // Returns the react instance for the given element
   function findReactInstance (el) {
     for (const key in el) {
@@ -16,13 +14,9 @@
 
   // Update the chat by changing the React component state
   function updateChatText (text) {
-    const chat = document.querySelector('textarea')
-    const evt = {target: { value: text }}
-
-    if (!reactInstance) {
-      reactInstance = findReactInstance(chat)
-    }
-
+    let chat = document.querySelector('textarea')
+    let evt = {target: { value: text }}
+    let reactInstance = findReactInstance(chat)
     if (reactInstance) {
       let prop = reactInstance.props.children.props
       prop.onChange(evt)

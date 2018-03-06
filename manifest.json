@@ -10,8 +10,8 @@
       "https://*.twitch.tv/*"
     ],
     "js": [
-      "inject-script.js",
-      "content.js"
+      "content.js",
+      "inject-script.js"
     ],
     "css": [ "css/styles.css" ]
   }],
@@ -22,5 +22,8 @@
   "background" : {
     "scripts": [ "background.js" ]
   },
-  "permissions": [ "storage" ]
+  "permissions": [
+    "storage",
+    "tabs"
+  ]
 }
